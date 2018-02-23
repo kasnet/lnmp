@@ -14,11 +14,11 @@
 ## Quick Start
 To pull from docker hub:
 ```
-docker pull kasnet/lnmp
+docker pull kasnet/lnmp:7.1.12-fpm
 ```
 ### Running
 To simply run the container:
 ```
-sudo docker run -d kasnet/lnmp
+sudo docker run -d kasnet/lnmp:7.1.12-fpm
 ```
 
