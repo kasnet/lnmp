@@ -4,7 +4,7 @@
 ### Version
 | Docker Tag | GitHub Release | Nginx Version | PHP Version | Alpine Version | Mysql Version |
 |-----|-------|-----|--------|--------|--------|
-| 7.1.12-fpm | Master Branch |1.13.7 | 7.1.12 | 3.4 | 5.7 |
+| latest | Master Branch |1.13.7 | 7.1.12 | 3.4 | 5.7 |
 
 
 ### Links
@@ -14,12 +14,17 @@
 ## Quick Start PHP
 To pull from docker hub:
 ```
-docker pull kasnet/lnmp:7.1.12-fpm
+docker pull kasnet/lnmp
 ```
 ### Running
 To run the container:
 ```
-sudo docker run --name lnmp -p 88:80 -v <project_path>/src:/var/www/html -d kasnet/lnmp:7.1.12-fpm
+sudo docker run --name lnmp 
+-p 88:80 
+-v <project_path>/src:/var/www/html:rw 
+-v <project_path>/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:rw 
+-v <project_path>/conf/nginx/vhosts/nginx-site.conf:/etc/nginx/sites-available/default.conf:rw
+-d kasnet/lnmp
 ```
 To into the container:
 ```
