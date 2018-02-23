@@ -32,7 +32,7 @@ To pull from docker hub:
 docker pull msyql:5.7
 ```
 
-### Runing Mysql
+### Runing
 To run the container:
 ```
 docker run --name mysql -p 3306:3306 -e MYSQL\_ROOT\_PASSWORD=123456 -v <project_path>/mysql_data:/var/lib/mysql -v <project_path>/conf:/etc/mysql/conf.d -d mysql:5.7
