@@ -9,7 +9,7 @@
 
 ### Links
 - [https://github.com/kasnet/lnmp](https://github.com/kasnet/lnmp)
-- [https://registry.hub.docker.com/u/kasnet/lnm/](https://registry.hub.docker.com/u/kasnet/lnmp/)
+- [https://registry.hub.docker.com/u/kasnet/lnmp/](https://registry.hub.docker.com/u/kasnet/lnmp/)
 
 ## Quick Start
 To pull from docker hub:
