@@ -21,4 +21,7 @@ To run the container:
 ```
 sudo docker run --name lnmp -p 88:80 -v src:/var/www/html -d kasnet/lnmp:7.1.12-fpm
 ```
-
+To into the container:
+```
+sudo docker exec -it lnmp /bin/bash
+```
