@@ -3,7 +3,6 @@
 
 ### Version
 | Docker Tag | GitHub Release | Nginx Version | PHP Version | Alpine Version | Mysql Version |
-|-----|-------|-----|--------|--------|
 | 7.1.12-fpm | Master Branch |1.13.7 | 7.1.12 | 3.4 | 5.7 |
 
 
