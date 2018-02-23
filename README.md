@@ -17,8 +17,8 @@ To pull from docker hub:
 docker pull kasnet/lnmp:7.1.12-fpm
 ```
 ### Running
-To simply run the container:
+To run the container:
 ```
-sudo docker run -d kasnet/lnmp:7.1.12-fpm
+sudo docker run --name lnmp -p 88:80 -v src:/var/www/html -d kasnet/lnmp:7.1.12-fpm
 ```
 
