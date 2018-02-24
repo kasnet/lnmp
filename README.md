@@ -6,6 +6,57 @@
 |-----|-------|-----|--------|--------|--------|
 | latest | Master Branch |1.13.7 | 7.1.12 | 3.4 | 5.7 |
 
+### PHP Modules
+```
+[PHP Modules]
+amqp
+Core
+ctype
+curl
+date
+dom
+exif
+fileinfo
+filter
+ftp
+gd
+hash
+iconv
+intl
+json
+libxml
+mbstring
+mcrypt
+mysqli
+mysqlnd
+openssl
+pcre
+PDO
+pdo_mysql
+pdo_sqlite
+Phar
+posix
+readline
+redis
+Reflection
+session
+SimpleXML
+soap
+SPL
+sqlite3
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+xsl
+Zend OPcache
+zip
+zlib
+
+[Zend Modules]
+Zend OPcache
+```
 
 ### Links
 - [https://github.com/kasnet/lnmp](https://github.com/kasnet/lnmp)
