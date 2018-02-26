@@ -164,7 +164,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   # add phpredis
   && cd ../ \
   && mkdir -p /usr/src/php/ext \
-  && mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis \
+  && mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis
 
 RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 #    sed -i -e "s/v3.4/edge/" /etc/apk/repositories && \
