@@ -12,6 +12,8 @@ ENV DEVEL_KIT_MODULE_VERSION 0.3.0
 ENV LUAJIT_LIB=/usr/lib
 ENV LUAJIT_INC=/usr/include/luajit-2.0
 ENV PHPREDIS_VERSION 3.1.3
+ENV RABBITMQ_VERSION 0.8.0
+ENV AMQP_VERSION 1.9.0
 
 # resolves #166
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
@@ -90,6 +92,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && curl -fSL https://github.com/simpl/ngx_devel_kit/archive/v$DEVEL_KIT_MODULE_VERSION.tar.gz -o ndk.tar.gz \
   && curl -fSL https://github.com/openresty/lua-nginx-module/archive/v$LUA_MODULE_VERSION.tar.gz -o lua.tar.gz \
   && curl -fSL https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz -o phpredis.tar.gz \
+  && curl -fSL https://github.com/alanxz/rabbitmq-c/releases/download/v$RABBITMQ_VERSION/rabbitmq-c-$RABBITMQ_VERSION.tar.gz -o rabbitmq.tar.gz \
+  && curl -fSL https://pecl.php.net/get/amqp-$AMQP_VERSION.tgz -o amqp.tar.gz \
   && export GNUPGHOME="$(mktemp -d)" \
   && found=''; \
   for server in \
@@ -109,7 +113,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && tar -zxC /usr/src -f ndk.tar.gz \
   && tar -zxC /usr/src -f lua.tar.gz \
   && tar -zxC /usr/src -f phpredis.tar.gz \
-  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz phpredis.tar.gz \ 
+  && tar -zxC /usr/src -f rabbitmq.tar.gz \
+  && tar -zxC /usr/src -f amqp.tar.gz \
+  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz phpredis.tar.gz rabbitmq.tar.gz amqp.tar.gz \ 
   && cd /usr/src/nginx-$NGINX_VERSION \
   && ./configure $CONFIG --with-debug \
   && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -136,6 +142,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
   && strip /usr/sbin/nginx* \
   && strip /usr/lib/nginx/modules/*.so \
+  && cd /usr/src \
   && rm -rf /usr/src/nginx-$NGINX_VERSION \
   \
   # Bring in gettext so we can get `envsubst`, then throw
@@ -159,12 +166,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   \
   # forward request and error logs to docker log collector
   && ln -sf /dev/stdout /var/log/nginx/access.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log \
-  \
-  # add phpredis
-  && cd ../ \
-  && mkdir -p /usr/src/php/ext \
-  && mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis
+  && ln -sf /dev/stderr /var/log/nginx/error.log 
 
 RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 #    sed -i -e "s/v3.4/edge/" /etc/apk/repositories && \
@@ -197,14 +199,31 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     libffi-dev \
     freetype-dev \
     sqlite-dev \
-    libjpeg-turbo-dev && \
+    libjpeg-turbo-dev \
+     \
+    # add phpredis
+    && mkdir -p /usr/src/php/ext \
+    && mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis \
+    # add rabbitmq-c
+    && cd rabbitmq-c-$RABBITMQ_VERSION \
+    && ./configure --prefix=/usr/local/rabbitmq-c-$RABBITMQ_VERSION \
+    && make && make install \
+    && cd /usr/src \
+    # add amqp
+    && mv amqp-$AMQP_VERSION /usr/src/php/ext/amqp \
+    && docker-php-ext-configure amqp \
+    --with-php-config=/usr/local/bin/php-config \
+    --with-amqp \
+    --with-librabbitmq-dir=/usr/local/rabbitmq-c-0.7.1 \
+    && 
+    #php extension
     docker-php-ext-configure gd \
       --with-gd \
       --with-freetype-dir=/usr/include/ \
       --with-png-dir=/usr/include/ \
       --with-jpeg-dir=/usr/include/ && \
     #curl iconv session
-    docker-php-ext-install pdo_mysql pdo_sqlite mysqli mcrypt gd exif intl xsl json soap dom zip opcache redis && \
+    docker-php-ext-install pdo_mysql pdo_sqlite mysqli mcrypt gd exif intl xsl json soap dom zip opcache redis amqp && \
     pecl install xdebug && \
     docker-php-source delete && \
     mkdir -p /etc/nginx && \
