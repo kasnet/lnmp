@@ -71,12 +71,13 @@ docker pull kasnet/lnmp
 ### Running
 To run the container:
 ```
-sudo docker run --name lnmp 
+sudo docker run -it 
 -p 88:80 
 -v <project_path>/src:/var/www/html:rw 
 -v <project_path>/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:rw 
 -v <project_path>/conf/nginx/vhosts/nginx-site.conf:/etc/nginx/sites-available/default.conf:rw
--d kasnet/lnmp
+--name lnmp
+-d kasnet/lnmpdock /var/www/autostart.sh
 ```
 To into the container:
 ```
