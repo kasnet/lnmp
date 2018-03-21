@@ -77,7 +77,7 @@ sudo docker run -it
 -v <project_path>/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:rw 
 -v <project_path>/conf/nginx/vhosts/nginx-site.conf:/etc/nginx/sites-available/default.conf:rw
 --name lnmp
--d kasnet/lnmpdock /var/www/autostart.sh
+-d kasnet/lnmp /start.sh
 ```
 To into the container:
 ```
