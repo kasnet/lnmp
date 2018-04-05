@@ -87,7 +87,7 @@ sudo docker exec -it lnmp /bin/bash
 ## Quick Start MSYQL
 To pull from docker hub:
 ```
-docker pull msyql:5.7
+docker pull mysql:5.7
 ```
 
 ### Runing
