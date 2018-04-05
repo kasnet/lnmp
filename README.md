@@ -95,8 +95,10 @@ To run the container:
 ```
 docker run --name mysql 
 -p 3306:3306 
--e MYSQL\_ROOT\_PASSWORD=123456 
--v <project_path>/conf/my.cnf:/etc/mysql/conf.d/my.cnf 
+-e MYSQL_ROOT_PASSWORD=123456 
+-v $PWD/logs:/logs 
+-v $PWD/data:/mysql_data
+-v $PWD/conf/my.cnf:/etc/mysql/conf.d/my.cnf 
 -d mysql:5.7
 ```
 To into the container:
