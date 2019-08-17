@@ -1,6 +1,6 @@
 FROM php:7.1.12-fpm-alpine
 
-LABEL maintainer="Ric Harvey <ric@ngd.io>"
+LABEL maintainer="kasnet"
 
 ENV php_conf /usr/local/etc/php-fpm.conf
 ENV fpm_conf /usr/local/etc/php-fpm.d/www.conf
@@ -14,6 +14,7 @@ ENV LUAJIT_INC=/usr/include/luajit-2.0
 ENV PHPREDIS_VERSION 3.1.3
 ENV RABBITMQ_VERSION 0.8.0
 ENV AMQP_VERSION 1.9.0
+ENV RDKAFKA_VERSION 3.1.2
 
 # resolves #166
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
@@ -94,6 +95,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && curl -fSL https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz -o phpredis.tar.gz \
   && curl -fSL https://github.com/alanxz/rabbitmq-c/releases/download/v$RABBITMQ_VERSION/rabbitmq-c-$RABBITMQ_VERSION.tar.gz -o rabbitmq.tar.gz \
   && curl -fSL https://pecl.php.net/get/amqp-$AMQP_VERSION.tgz -o amqp.tar.gz \
+  && curl -fSL https://pecl.php.net/get/rdkafka-$RDKAFKA_VERSION.tgz -o rdkafka.tar.gz \
   && export GNUPGHOME="$(mktemp -d)" \
   && found=''; \
   for server in \
@@ -115,7 +117,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && tar -zxC /usr/src -f phpredis.tar.gz \
   && tar -zxC /usr/src -f rabbitmq.tar.gz \
   && tar -zxC /usr/src -f amqp.tar.gz \
-  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz phpredis.tar.gz rabbitmq.tar.gz amqp.tar.gz \ 
+  && tar -zxC /usr/src -f rdkafka.tar.gz \
+  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz phpredis.tar.gz rabbitmq.tar.gz amqp.tar.gz rdkafka.tar.gz \ 
   && cd /usr/src/nginx-$NGINX_VERSION \
   && ./configure $CONFIG --with-debug \
   && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -200,6 +203,7 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     freetype-dev \
     sqlite-dev \
     libjpeg-turbo-dev \
+    librdkafka \
      \
     # add phpredis
     && mkdir -p /usr/src/php/ext \
@@ -215,6 +219,10 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     --with-php-config=/usr/local/bin/php-config \
     --with-amqp \
     --with-librabbitmq-dir=/usr/local/rabbitmq-c-0.7.1 \
+    # add rdkafka
+    && mv rdkafka-$RDKAFKA_VERSION /usr/src/php/ext/rdkafka \
+    && docker-php-ext-configure rdkafka \
+    --with-php-config=/usr/local/bin/php-config \
     && 
     #php extension
     docker-php-ext-configure gd \
@@ -223,7 +231,7 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
       --with-png-dir=/usr/include/ \
       --with-jpeg-dir=/usr/include/ && \
     #curl iconv session
-    docker-php-ext-install pdo_mysql pdo_sqlite mysqli mcrypt gd exif intl xsl json soap dom zip opcache redis amqp && \
+    docker-php-ext-install pdo_mysql pdo_sqlite mysqli mcrypt gd exif intl xsl json soap dom zip opcache redis amqp rdkafka && \
     pecl install xdebug && \
     docker-php-source delete && \
     mkdir -p /etc/nginx && \
