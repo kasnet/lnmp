@@ -54,6 +54,7 @@ xsl
 Zend OPcache
 zip
 zlib
+rdkafka
 
 [Zend Modules]
 Zend OPcache
